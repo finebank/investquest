@@ -22,6 +22,7 @@ export function SinglePlayerGame() {
     nextSinglePlayerQuestion,
     setScreen,
     resetSinglePlayer,
+    updateSinglePlayerTimer,
   } = useTriviaGame();
   
   const { playSuccess, playHit } = useAudio();
@@ -46,6 +47,7 @@ export function SinglePlayerGame() {
 
   useEffect(() => {
     setTimeRemaining(20);
+    updateSinglePlayerTimer(20);
     
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -54,12 +56,15 @@ export function SinglePlayerGame() {
     if (!singlePlayerShowAnswer) {
       timerRef.current = setInterval(() => {
         setTimeRemaining((prev) => {
-          if (prev <= 1) {
+          const newTime = prev - 1;
+          updateSinglePlayerTimer(newTime);
+          if (newTime <= 0) {
             clearInterval(timerRef.current!);
+            updateSinglePlayerTimer(0);
             submitSinglePlayerAnswer(-1);
             return 0;
           }
-          return prev - 1;
+          return newTime;
         });
       }, 1000);
     }
@@ -69,7 +74,7 @@ export function SinglePlayerGame() {
         clearInterval(timerRef.current);
       }
     };
-  }, [singlePlayerQuestionIndex, singlePlayerShowAnswer]);
+  }, [singlePlayerQuestionIndex, singlePlayerShowAnswer, updateSinglePlayerTimer]);
 
   useEffect(() => {
     if (singlePlayerShowAnswer && timerRef.current) {

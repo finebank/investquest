@@ -67,6 +67,8 @@ interface TriviaGameState {
   submitSinglePlayerAnswer: (answer: number) => void;
   nextSinglePlayerQuestion: () => void;
   resetSinglePlayer: () => void;
+  handleMessage: (message: WebSocketMessage) => void;
+  updateSinglePlayerTimer: (time: number) => void;
 }
 
 export const useTriviaGame = create<TriviaGameState>()(
@@ -363,6 +365,10 @@ export const useTriviaGame = create<TriviaGameState>()(
         singlePlayerCorrectAnswers: 0,
         selectedAnswer: null,
       });
+    },
+
+    updateSinglePlayerTimer: (time: number) => {
+      set({ singlePlayerTimeRemaining: time });
     },
   }))
 );
