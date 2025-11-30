@@ -1,73 +1,79 @@
-import { Canvas } from "@react-three/fiber";
-import { Suspense, useEffect, useState } from "react";
-import { KeyboardControls } from "@react-three/drei";
-// import { useAudio } from "./lib/stores/useAudio";
+import { useEffect } from "react";
+import { useTriviaGame } from "@/lib/stores/useTriviaGame";
+import { useAudio } from "@/lib/stores/useAudio";
+import { MainMenu } from "@/components/game/MainMenu";
+import { CreateRoom } from "@/components/game/CreateRoom";
+import { JoinRoom } from "@/components/game/JoinRoom";
+import { Lobby } from "@/components/game/Lobby";
+import { GameScreen } from "@/components/game/GameScreen";
+import { SinglePlayerGame } from "@/components/game/SinglePlayerGame";
+import { ResultsScreen } from "@/components/game/ResultsScreen";
+import { Leaderboard } from "@/components/game/Leaderboard";
+import { Toaster } from "@/components/ui/sonner";
 import "@fontsource/inter";
 
-// Import our game components
+function SoundManager() {
+  const { setBackgroundMusic, setHitSound, setSuccessSound } = useAudio();
 
-// Define control keys for the game
-// const controls = [
-//   { name: "forward", keys: ["KeyW", "ArrowUp"] },
-//   { name: "backward", keys: ["KeyS", "ArrowDown"] },
-//   { name: "leftward", keys: ["KeyA", "ArrowLeft"] },
-//   { name: "rightward", keys: ["KeyD", "ArrowRight"] },
-//   { name: "punch", keys: ["KeyJ"] },
-//   { name: "kick", keys: ["KeyK"] },
-//   { name: "block", keys: ["KeyL"] },
-//   { name: "special", keys: ["Space"] },
-// ];
-
-// Main App component
-function App() {
-  //const { gamePhase } = useFighting();
-  const [showCanvas, setShowCanvas] = useState(false);
-
-  // Show the canvas once everything is loaded
   useEffect(() => {
-    setShowCanvas(true);
-  }, []);
+    const bgMusic = new Audio("/sounds/background.mp3");
+    bgMusic.loop = true;
+    bgMusic.volume = 0.3;
+    setBackgroundMusic(bgMusic);
+
+    const hitSound = new Audio("/sounds/hit.mp3");
+    hitSound.volume = 0.5;
+    setHitSound(hitSound);
+
+    const successSound = new Audio("/sounds/success.mp3");
+    successSound.volume = 0.5;
+    setSuccessSound(successSound);
+
+    return () => {
+      bgMusic.pause();
+      bgMusic.src = "";
+    };
+  }, [setBackgroundMusic, setHitSound, setSuccessSound]);
+
+  return null;
+}
+
+function App() {
+  const { screen, connect } = useTriviaGame();
+
+  useEffect(() => {
+    connect();
+  }, [connect]);
+
+  const renderScreen = () => {
+    switch (screen) {
+      case "menu":
+        return <MainMenu />;
+      case "create_room":
+        return <CreateRoom />;
+      case "join_room":
+        return <JoinRoom />;
+      case "lobby":
+        return <Lobby />;
+      case "game":
+        return <GameScreen />;
+      case "single_player":
+        return <SinglePlayerGame />;
+      case "results":
+        return <ResultsScreen />;
+      case "leaderboard":
+        return <Leaderboard />;
+      default:
+        return <MainMenu />;
+    }
+  };
 
   return (
-    <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}/>
-    // {showCanvas && (
-    //   <KeyboardControls map={controls}>
-    //     {gamePhase === 'menu' && <Menu />}
-
-    //     {gamePhase === 'character_selection' && <CharacterSelection />}
-
-    //     {(gamePhase === 'fighting' || gamePhase === 'round_end' || gamePhase === 'match_end') && (
-    //       <>
-    //         <Canvas
-    //           shadows
-    //           camera={{
-    //             position: [0, 2, 8],
-    //             fov: 45,
-    //             near: 0.1,
-    //             far: 1000
-    //           }}
-    //           gl={{
-    //             antialias: true,
-    //             powerPreference: "default"
-    //           }}
-    //         >
-    //           <color attach="background" args={["#111111"]} />
-
-    //           {/* Lighting */}
-    //           <Lights />
-
-    //           <Suspense fallback={null}>
-    //           </Suspense>
-    //         </Canvas>
-    //         <GameUI />
-    //       </>
-    //     )}
-
-    //     <ShortcutManager />
-    //     <SoundManager />
-    //   </KeyboardControls>
-    // )}
-    //</div>
+    <>
+      <SoundManager />
+      {renderScreen()}
+      <Toaster />
+    </>
   );
 }
 
