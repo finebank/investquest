@@ -10,7 +10,7 @@ import type {
   WebSocketMessage,
 } from "@shared/trivia";
 
-type Screen = "menu" | "lobby" | "create_room" | "join_room" | "game" | "results" | "leaderboard" | "single_player";
+type Screen = "menu" | "lobby" | "create_room" | "join_room" | "game" | "results" | "leaderboard" | "single_player" | "profile";
 
 interface TriviaGameState {
   screen: Screen;

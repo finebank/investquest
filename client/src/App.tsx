@@ -9,6 +9,7 @@ import { GameScreen } from "@/components/game/GameScreen";
 import { SinglePlayerGame } from "@/components/game/SinglePlayerGame";
 import { ResultsScreen } from "@/components/game/ResultsScreen";
 import { Leaderboard } from "@/components/game/Leaderboard";
+import { UserProfile } from "@/components/game/UserProfile";
 import { Toaster } from "@/components/ui/sonner";
 import "@fontsource/inter";
 
@@ -63,6 +64,8 @@ function App() {
         return <ResultsScreen />;
       case "leaderboard":
         return <Leaderboard />;
+      case "profile":
+        return <UserProfile />;
       default:
         return <MainMenu />;
     }
